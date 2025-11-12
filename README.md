@@ -1,56 +1,78 @@
-# Indoor Localization Using WiFi Fingerprinting
- ### **My Practice Project** – UJIIndoorLoc Dataset
- 
-  --- 
-  
-  ## Overview 
-  This project implements **WiFi-based indoor localization** using **fingerprinting** on the famous [UJIIndoorLoc dataset](https://archive.ics.uci.edu/ml/datasets/UJIIndoorLoc). 
-  
-  Given **520 RSSI values** from nearby WiFi access points, the model predicts: 
-  - **Building ID** (0–2) 
-  - **Floor ID** (0–4) 
-  **Approach**: Multi-label classification with **PCA + KNN**
+# Indoor Localization Using WiFi Fingerprinting  
+### **My Practice Project** – UJIIndoorLoc Dataset
 
-  --- 
-  
-  ## My Key Improvements (What I Added) 
-  | Improvement | Why |
-  |-----------|-----|
-  | Added OneVsRestClassifier + KNeighborsClassifier | Avoids sparse matrix bugs and version conflicts |
-  | Added **GridSearchCV** | Found best k=1 |
-  | Added **per-label confusion matrices** | Visualize where errors occur | 
-  | Created requirements.txt | Reproducible environment |
-  | Full **step-by-step comments** | Educational & clean code |
-  
-   --- 
-   
-   ## Fingerprinting Pipeline (Offline + Online)
-   | Phase | Code | UWB+CIR Equivalent |
-   |------|------|---------------------|
-   | **Offline (Radio Map)** | trainingData.csv | CIR at known grid points |
-   | **Fingerprint** | 520 RSSI values | CIR taps / PDP |
-   | **Preprocessing** | 100 → -110 | Remove low-SNR anchors |
-   | **Feature Extraction** | PCA (95% variance) | CIR → PDP + moments |
-   | **Matching** | KNN (k=1) | Nearest neighbor in feature space |
-   | **Output** | Building + Floor | (x, y) coordinates |
-   
-   > This is **discrete localization** (classification) vs **continuous** (regression in UWB). 
-   
-   --- 
-   
-   ## Results 
-    Metric | Value |
-    |-------|-------|
-    | **Test Accuracy** | **95.75%** |
-    | **Hamming Loss** | **1.06%** |
-    | **Best k (GridSearchCV)** | 1 |
-    | **Validation Accuracy** (unseen data) | ~81% (expected drop due to domain shift) |
-    
-    > k=1 wins because the radio map is dense and clean.
-    
-    ---
-    
-    ## How to Run
+---
+
+## Overview
+This project implements **WiFi-based indoor localization** using **fingerprinting** on the famous [UJIIndoorLoc dataset](https://archive.ics.uci.edu/ml/datasets/UJIIndoorLoc).  
+
+Given **520 RSSI values** from nearby WiFi access points, the model predicts:  
+- **Building ID** (0–2)  
+- **Floor ID** (0–4)  
+
+**Approach**: Multi-label classification with **PCA + KNN**  
+**No `skmultilearn`** → 100% stable with modern `scikit-learn`
+
+---
+
+## My Key Improvements (What I Added)
+
+| Improvement | Why |
+|--------------|-----|
+| Added `OneVsRestClassifier + KNeighborsClassifier` | Avoids sparse matrix bugs and version conflicts | 
+| Added **GridSearchCV** | Found best `k=1` |
+| Added **per-label confusion matrices** | Visualize where errors occur |
+| Created `requirements.txt` | Reproducible environment |
+| Full **step-by-step comments** | Educational & clean code |
+
+---
+
+## Fingerprinting Pipeline (Offline + Online)
+
+| Phase | Code | UWB+CIR Equivalent |
+|--------|------|---------------------|
+| **Offline (Radio Map)** | `trainingData.csv` | CIR at known grid points |
+| **Fingerprint** | 520 RSSI values | CIR taps / PDP |
+| **Preprocessing** | `100 → -110` | Remove low-SNR anchors |
+| **Feature Extraction** | `PCA (95% variance)` | CIR → PDP + moments |
+| **Matching** | `KNN (k=1)` | Nearest neighbor in feature space |
+| **Output** | Building + Floor | (x, y) coordinates |
+
+> This is **discrete localization** (classification) vs **continuous** (regression in UWB).
+
+---
+
+## Results
+
+| Metric | Value |
+|--------|-------|
+| **Test Accuracy** | **95.75%** |
+| **Hamming Loss** | **1.06%** |
+| **Best k (GridSearchCV)** | `1` |
+| **Validation Accuracy** (unseen data) | ~81% (expected drop due to domain shift) |
+
+> `k=1` wins because the radio map is dense and clean.
+
+---
+
+## How to Run
+
+```bash
+# 1. Clone repo
+git clone https://github.com/YOUR-USERNAME/YOUR-REPO-NAME.git
+cd YOUR-REPO-NAME
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Download dataset
+# Place `trainingData.csv` and `validationData.csv` in the folder
+# Link: https://archive.ics.uci.edu/ml/datasets/UJIIndoorLoc
+
+# 4. Run notebook
+jupyter notebook "Predicting_Indoor_Location_Using_WiFi_Fingerprinting.ipynb"
+
+---
 
 ```bash
 # 1. Clone repo
